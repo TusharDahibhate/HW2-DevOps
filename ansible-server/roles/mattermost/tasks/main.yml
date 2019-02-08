@@ -1,0 +1,97 @@
+---
+    - name: Include variables
+      include_vars: vars/main.yml
+
+    - name: Include secrets
+      include_vars: vars/secrets.yml
+
+    - name: Get the mattermost server
+      shell: "wget -nv -P {{dest_dir}} {{url}}"
+      args:
+        chdir: "{{ dest_dir }}"
+        creates: "{{ file_name }}"
+      become: yes
+      
+    - name: Extract mattermost into /opt
+      unarchive:
+        src: "{{ ansible_env.HOME }}/{{ file_name }}"
+        dest: /opt
+        creates: /opt/mattermost
+        remote_src: yes
+      become: yes  
+
+    - name: Creates directory storage directory for file
+      file:
+        path: /opt/mattermost/data
+        state: directory
+      become: yes
+
+    - name: Create group 'mattermost' if not present
+      group:
+        name: mattermost
+        state: present
+      become: yes
+    
+    - name: Add the user 'mattermost' and group 'mattermost'
+      user:
+        name: mattermost
+        group: mattermost
+      become: yes
+
+    - name: Assign ownership of mattermost files to the mattermost user and group
+      file:
+        path: /opt/mattermost
+        owner: mattermost
+        group: mattermost
+        state: directory
+        mode: "g+w"
+        recurse: yes
+      become: yes
+
+    - name: Copy the config file to the web server      
+      template: 
+        src: templates/config.json.j2
+        dest: /opt/mattermost/config/config.json
+        owner: mattermost 
+        mode: 0600      
+      become: yes
+
+    - name: Setup Mattermost to use systemd for starting and stopping.
+      template:
+        src: templates/systemd.j2
+        dest: /etc/systemd/system/mattermost.service
+        owner: root
+        group: root
+        mode: 0664
+      become: yes
+
+    - name: Start the service
+      service:
+        name: mattermost
+        state: started
+        enabled: true
+      become: yes    
+    
+    - name: Create a user with system admin privileges
+      shell: "./mattermost user create --firstname {{ mattermost_user.firstname }} lastname {{ mattermost_user.lastname }} --system_admin --email {{ mattermost_user.email }} --username {{ mattermost_user.username }} --password {{ mattermost_userpassword }}"      
+      args:
+        chdir: "/opt/mattermost/bin/"
+      register: output      
+      failed_when: '"SqlUserStore.Save" not in output.stderr'
+      become: yes
+
+    - name: Check if team already exists
+      shell: "./mattermost team list "  
+      args: 
+        chdir: "/opt/mattermost/bin/"
+      register: output1
+      become: yes      
+
+    - name: Create a Team
+      shell: "./mattermost team create --name {{ mattermost_team.name }} --display_name {{ mattermost_team.display_name }} "      
+      args:
+        chdir: "/opt/mattermost/bin/"
+      register: output2
+      failed_when: '"SqlUserStore.Save" not in output.stderr'
+      when: "mattermost_team.name not in output1.stderr_lines"
+      become: yes

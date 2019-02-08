@@ -1,0 +1,40 @@
+---
+# mysql_root_password: root
+
+mysql_databases:
+  name: mattermost
+  encoding: latin1
+  collation: latin1_general_ci
+  
+mysql_users:
+  name: mmuser
+  host: "%"
+  # password: root
+  priv: "mattermost.*:ALL"
+
+EnableEmailNotifications: true
+NotificationDisplayName: No-Reply
+NotificationFromAddress: gmail.com
+SMTPServerUserName: test.mattermost.user@gmail.com
+# SMTPServerUserPassword: test@123
+SMTPServer: mail.gmail.com
+SMTPServerPort: 465
+ConnectionSecurity: TLS
+SiteURL: https://mattermost.example.com
+
+url: "https://releases.mattermost.com/5.7.0/mattermost-5.7.0-linux-amd64.tar.gz"
+dest_dir: "{{ ansible_env.HOME }}"
+file_name:  mattermost-5.7.0-linux-amd64.tar.gz
+
+mattermost_user:
+  firstname: Test
+  lastname: User
+  email: test.mattermost.user@gmail.com
+  username: Test
+  # password: test@123
+
+mattermost_team:
+  name: testteam1
+  display_name: "Test_team"  
+  email: "test.mattermost.user@gmail.com"
+  

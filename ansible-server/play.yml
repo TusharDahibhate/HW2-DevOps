@@ -1,0 +1,7 @@
+---
+- hosts: web
+
+  roles:
+    - init
+    - mysql
+    - mattermost

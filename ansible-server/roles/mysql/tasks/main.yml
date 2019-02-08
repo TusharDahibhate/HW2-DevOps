@@ -1,0 +1,53 @@
+---
+    - name: Include vars of vars/main.yaml
+      include_vars: vars/main.yml
+    
+    - name: Include secrets
+      include_vars: vars/secrets.yml
+
+    - name: Set the credentials for mysql
+      become: yes
+      debconf: 
+        name: 'mysql-server'
+        question: 'mysql-server/root_password'
+        value: '{{ mysql_root_password }}' 
+        vtype: 'password'
+
+    - name: Confirm mysql credentials
+      become: yes
+      debconf:
+        name: 'mysql-server'
+        question: 'mysql-server/root_password_again'
+        value: '{{ mysql_root_password }}'
+        vtype: 'password'
+      
+    - name: Install mysql server
+      apt: 
+        pkg: '{{ item }}'
+        state: present 
+        update_cache: yes
+      with_items:
+        - python-mysqldb
+        - mysql-server
+        - python3-pymysql
+      become: true
+
+    - name: Copy mysql configuration to nodes
+      template: 
+        src: templates/.my.cnf 
+        dest: "{{ ansible_env.HOME}}/.my.cnf" 
+        owner: vagrant 
+        mode: 0600
+      
+    - name: Create a new database with name 'mattermost'
+      mysql_db:
+        name: "{{ mysql_databases.name }}"
+        state: present
+    
+    - name: Create mmuser user
+      mysql_user:
+        name: "{{ mysql_users.name }}"
+        password: "{{ mysql_user_password }}"
+        priv: "{{ mysql_users.priv }}"
+        state: present
+        host: "{{ mysql_users.host }}"

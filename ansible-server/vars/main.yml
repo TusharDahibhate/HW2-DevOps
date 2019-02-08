@@ -1,6 +1,4 @@
 ---
-# mysql_root_password: root
-
 mysql_databases:
   name: mattermost
   encoding: latin1
@@ -9,14 +7,12 @@ mysql_databases:
 mysql_users:
   name: mmuser
   host: "%"
-  # password: root
   priv: "mattermost.*:ALL"
 
 EnableEmailNotifications: true
 NotificationDisplayName: No-Reply
 NotificationFromAddress: gmail.com
 SMTPServerUserName: test.mattermost.user@gmail.com
-# SMTPServerUserPassword: test@123
 SMTPServer: mail.gmail.com
 SMTPServerPort: 465
 ConnectionSecurity: TLS
@@ -30,8 +26,7 @@ mattermost_user:
   firstname: Test
   lastname: User
   email: test.mattermost.user@gmail.com
-  username: Test
-  # password: test@123
+  username: Test  
 
 mattermost_team:
   name: testteam1

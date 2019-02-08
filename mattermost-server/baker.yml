@@ -1,0 +1,3 @@
+name: mattermost-server
+vm:
+  ip: 192.168.33.100

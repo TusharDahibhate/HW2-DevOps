@@ -104,9 +104,11 @@ It will prompt for the password in order to use the secrets file.
 After entering the password, the playbook will start its execution.
 
 
-4. To access the mattermost UI, go to the browser and type  192.168.33.100:8065. This is the IP of the mattermost server
+4. To access the mattermost UI, go to the browser and type  192.168.33.100:8065. 
+This is the IP of the mattermost server
 
 
 
 # Screencast:
+https://youtu.be/Gu8WXWaNJbA
 

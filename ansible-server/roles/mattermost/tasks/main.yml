@@ -99,5 +99,5 @@
       args:
         chdir: "/opt/mattermost/bin/"
       register: output2
-      when: output0.stderr_lines|length == 0
+      when: output1.stderr_lines|length == 0
       become: yes      

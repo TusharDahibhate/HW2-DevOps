@@ -48,17 +48,15 @@ mattermost_team:
   
 ```
 
-Once these variable have been set, we will need to set the secrets. They include mysql root passwords and passwords of the mattermost user and server
+Once these variable have been set, we will need to set the secrets. They include mysql root passwords and passwords of the mattermost user and server. (This repo contains an encrypted secrets.yml. The user will have to create another secrets.yml)
+
 - Location: vars/secrets.yml - https://github.ncsu.edu/tdahibh/HW2-Devops/blob/master/ansible-server/vars/secrets.yml
 
 ```bash
 
 mysql_root_password: 
-
 mysql_user_password: 
-
 SMTPServerUserPassword: 
-
 mattermost_userpassword: 
 
 ```
@@ -97,13 +95,14 @@ $ ansible-vault encrypt vars/secrets.yml
 It will then prompt you for the password.
 After setting the password, the secrets.yml file will be encrypted
 
-4. To execute the playbooks,
+4. To execute the playbooks
 
 ```bash
 $ cd /ansible-server/
 $ ansible-playbook --vault-id @prompt -i inventory main.yml
 ```
 It will prompt for the password in order to use the secrets file.
+
 After entering the password, the playbook will start its execution.
 
 

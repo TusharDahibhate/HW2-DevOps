@@ -70,14 +70,21 @@
         name: mattermost
         state: started
         enabled: true
-      become: yes    
+      become: yes
+
+    - name: Check if user already exists
+      shell: "./mattermost user search {{ mattermost_user.email }}"  
+      args: 
+        chdir: "/opt/mattermost/bin/"
+      register: output0
+      become: yes          
     
     - name: Create a user with system admin privileges
       shell: "./mattermost user create --firstname {{ mattermost_user.firstname }} lastname {{ mattermost_user.lastname }} --system_admin --email {{ mattermost_user.email }} --username {{ mattermost_user.username }} --password {{ mattermost_userpassword }}"      
       args:
         chdir: "/opt/mattermost/bin/"
-      register: output      
-      failed_when: '"SqlUserStore.Save" not in output.stderr'
+      register: output            
+      when: output0.stderr_lines|length == 1
       become: yes
 
     - name: Check if team already exists
@@ -92,6 +99,5 @@
       args:
         chdir: "/opt/mattermost/bin/"
       register: output2
-      failed_when: '"SqlUserStore.Save" not in output.stderr'
-      when: "mattermost_team.name not in output1.stderr_lines"
-      become: yes
+      when: output0.stderr_lines|length == 0
+      become: yes      

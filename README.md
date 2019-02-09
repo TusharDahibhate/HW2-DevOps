@@ -71,11 +71,12 @@ Following roles have been defined in this repository
 2. mysql - This role handles the installation and configuration of mysql server
 3. mattermost - This role handles the installation, configuration, user and team creation for mattermost
 
-# Steps to execute Configuration
+# Steps to execute Ansible Playbook
 1. Go to the mattermost-server folder and execute:
 
 ```bash
-$baker bake
+cd /mattermost-server/
+$ baker bake
 ```
 
 This will spawn the mattermost server
@@ -83,14 +84,15 @@ This will spawn the mattermost server
 2. Go to the ansible-server folder and execute:
 
 ```bash
-$baker bake
+$ cd /ansible-server/
+$ baker bake
 ```
 
 This will spawn the ansible server
 
 3. After setting the variables and secrets, we will encrypt the secrets.yml file
 ```bash
-$ansible-vault encrypt vars/secrets.yml
+$ ansible-vault encrypt vars/secrets.yml
 ```
 It will then prompt you for the password.
 After setting the password, the secrets.yml file will be encrypted
@@ -98,7 +100,8 @@ After setting the password, the secrets.yml file will be encrypted
 4. To execute the playbooks,
 
 ```bash
-$ansible-playbook --vault-id @prompt -i inventory main.yml
+$ cd /ansible-server/
+$ ansible-playbook --vault-id @prompt -i inventory main.yml
 ```
 It will prompt for the password in order to use the secrets file.
 After entering the password, the playbook will start its execution.
